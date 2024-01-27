@@ -3,13 +3,15 @@ This library is the Disc World Library, dedicated to the late, great author Terr
 
 # This function is to check that we have the title in library, this with be called on multiple times through out the program.
 def get_book():
-      title = input("What is the Title of the book? " ).capitalize()
-      if title in books_inventory:
-            return title
-      else:
-            print("we don't have that title in our inventory.")
-            return 
-      
+      while True:
+               
+               title = input("What is the Title of the book? " ).capitalize()
+               if title in books_inventory:
+                    return title
+               else:
+                    print("we don't have that title in our inventory.")
+                    continue
+               
 
 # This function is to check that we have the member registered in library, this with be called on multiple times through out the program.
 def get_user():
@@ -27,7 +29,7 @@ def get_user():
             
       
 """ This function allows for the book to be borrowed, checking we have the book and the member is registered.
-Then updating the necessary perameters of book and member."""
+Then updating the necessary parameters of book and member."""
 
 def borrow_book():
       existing_title = get_book() # call to check we have the book
@@ -48,12 +50,16 @@ def borrow_book():
 
 
 """ This function allows for the book to be returned, once again checking the book exists and the member is registered.
-Then updating the necessary perameters of book and member."""
+Then updating the necessary parameters of book and member."""
 
 def return_book():
       existing_title = get_book() # call to check we have the book
       existing_user = get_user() # call to check the member is registered
-      fine = fines(existing_user)
+      if existing_title in users_info[existing_user]['borrowed_books']: # checking to see if the member had the book borrowed.
+          fines(existing_user)
+      else:
+           print(f"That member didn't have {existing_title} registered as borrowed. ") 
+           return   
       if not existing_title or not existing_user:
             print("Sorry, either we don't have your title or the member is not registered. Try again.")
             return
@@ -115,6 +121,7 @@ def add_title():
      
 # This fuction will remove a title from the library.
 def remove_title():
+     show_library()
      title = input("Please enter the title of the book you wish to remove from the library. \n").capitalize() 
      if title in books_inventory:
           books_inventory.pop(title)
@@ -135,25 +142,28 @@ def show_library():
 The display list for all titles is here because you might want to check a book title first to confirm it's name before adding or removing it."""
 
 def book_titles():
-      choise = int(input("""What would you like to do? 
-                     
-                     1. Add a book to the library
-                     2. Remove a book from the library
-                     3. Display a list of current titles
-                     
-                     Please choose :  """))
-      if choise == 1:
-           add_title()
+      try:
+          choise = int(input("""What would you like to do? 
+                         
+                         1. Add a book to the library
+                         2. Remove a book from the library
+                         3. Display a list of current titles
+                         
+                         Please choose :  """))
+          if choise == 1:
+               add_title()
 
-      elif choise == 2:
-           remove_title() 
+          elif choise == 2:
+               remove_title() 
 
-      elif choise == 3:
-           show_library()
-      else:
-           print("That wasn't on of the choises, Please try again. ")              
+          elif choise == 3:
+               show_library()
+          else:
+               print("That wasn't on of the choises, Please try again. ")              
+      except  ValueError:
+               print("That's not even a number!")
+               return
       
-      return
 # This function will see if the member has had the book too long and fine accordingly. Adding a mark to their permanent record.
 def fines(user):
      late = input("Has the borrowed book been out for more than 7 days? (Y/N) ").upper()
@@ -221,6 +231,7 @@ while True:
                   book_titles()      
 
             elif menu_choice == 6:
+                  print("Ok, Good-Bye!")
                   break
             else:
                   print("Sorry but that's not one of the options, please try again.") 
